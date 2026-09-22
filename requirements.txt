@@ -3,3 +3,4 @@ pandas==2.3.3
 numpy==2.2.6
 matplotlib==3.10.9
 statsmodels>=0.14      # step3_bonus.py (시계열 분해)에만 필요
+scipy>=1.11            # step5_sensitivity.py (선형회귀)에만 필요

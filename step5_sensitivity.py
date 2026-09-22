@@ -70,3 +70,47 @@ print(f"  기울기 배율   : {s6 / KMA_RATE:.1f}배  → 지점을 맞춰도 �
 print()
 print("  ※ 주의 : 시계열 회귀의 p값은 잔차 자기상관을 검정하지 않았으므로")
 print("           실제 유의성은 표시된 값보다 낮을 수 있다.")
+
+# =====================================================================
+# ④ 인사이트 해석 검증 — 초안의 주장이 데이터로 성립하는지 확인
+# =====================================================================
+print()
+print("=" * 66)
+print("④ 인사이트 해석 검증")
+print("=" * 66)
+
+df["폭염"] = (df["최고기온"] >= 33).astype(int)
+df["열대야"] = (df["최저기온"] >= 25).astype(int)
+ext = df.groupby(["연", "지점번호"])[["폭염", "열대야"]].sum().groupby("연").mean()
+
+print("  [인사이트 3] \"열대야가 폭염보다 빠르게 는다\" — 전국 기준 검증")
+for c in ["폭염", "열대야"]:
+    s = ext[c]
+    r = stats.linregress(np.arange(len(s)), s.values)
+    print(f"    {c:4s}: {s.iloc[0]:5.1f}일 → {s.iloc[-1]:5.1f}일 | "
+          f"{r.slope*10:+.1f}일/10년 (p={r.pvalue:.3f}) "
+          f"{'유의' if r.pvalue < 0.05 else '무의미'}")
+cw = df[df["지점명"] == "창원"].groupby("연")[["폭염", "열대야"]].sum()
+print("    창원  : 연도별 — 기준 연도에 따라 배율이 달라지므로 3개 연도를 함께 본다")
+for yy in (2016, 2024, 2025):
+    print(f"            {yy}년  폭염 {cw.loc[yy,'폭염']:>2.0f}일 · 열대야 {cw.loc[yy,'열대야']:>2.0f}일")
+print(f"            2016→2024(최다해) 폭염 {cw.loc[2024,'폭염']/cw.loc[2016,'폭염']:.1f}배 · "
+      f"열대야 {cw.loc[2024,'열대야']/cw.loc[2016,'열대야']:.1f}배")
+print(f"            2016→2025        폭염 {cw.loc[2025,'폭염']/cw.loc[2016,'폭염']:.1f}배 · "
+      f"열대야 {cw.loc[2025,'열대야']/cw.loc[2016,'열대야']:.1f}배")
+print("    → 전국에서는 두 지표의 증가 속도가 비슷하다. 창원 한정 현상으로 범위를 좁혀야 하며,")
+print("       '3배'는 최다 연도(2024)를 끝점으로 잡았을 때의 값이라는 점을 함께 밝혀야 한다.")
+
+print()
+print("  [인사이트 4] \"지역별 최대 4.7배 차이\" — 회귀로 재계산")
+REGIONS = ["강릉", "서울", "창원", "제주", "대구", "부산"]
+endpoint, slope = {}, {}
+for rg in REGIONS:
+    y = df[df["지점명"] == rg].groupby("연")["평균기온"].mean()
+    lr = stats.linregress(np.arange(len(y)), y.values)
+    endpoint[rg] = y.iloc[-1] - y.iloc[0]
+    slope[rg] = lr.slope * 10
+    print(f"    {rg:3s}: 끝점 {endpoint[rg]:+.2f}℃ | 회귀 {slope[rg]:+.2f}℃/10년 (p={lr.pvalue:.3f})")
+print(f"    → 배율: 끝점 비교 {max(endpoint.values())/min(endpoint.values()):.1f}배 "
+      f"vs 회귀 {max(slope.values())/min(slope.values()):.1f}배")
+print("    → 배율은 측정 방법에 좌우된다. 순서(강릉 최고 · 부산 최저)만 유지된다.")

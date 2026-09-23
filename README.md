@@ -107,8 +107,9 @@ Codyssey AI 네이티브 과정 · M1-1 개인과제
 | 분석 질문 4개 | REPORT.md 2장 |
 | 데이터 정제·이상치 처리 기준 | 3-1 |
 | 적용한 시계열 분석 기법 | 3-2 |
-| **트렌드 · 계절성 · 노이즈 — 용어 정의와 실제 값** | **3-3** |
-| 시각화 8장 | 4장 |
+| **트렌드 · 계절성 · 노이즈 — 같은 눈금으로 본 세 성분** | **3-3** (그림 11) |
+| **이동평균 창 365일 · min_periods의 근거** | **3-2-1** (그림 12) |
+| 시각화 10장 | 4장 |
 | **변화량과 변화율 — 기온에 %를 쓰지 않은 이유** | **4-6** |
 | 인사이트 5개 (관찰·해석·행동) | 5장 |
 | 보너스 — 시계열 분해 · 베이스라인 예측 | 6장 |
@@ -141,6 +142,7 @@ Codyssey AI 네이티브 과정 · M1-1 개인과제
                                     ├──▶ step4_regional_range.py ──▶ images/07.png
                                     ├──▶ step7_changwon_atlas.py  ──▶ images/08 · 09.png  (부록 C)
                                     ├──▶ step8_rate_of_change.py  ──▶ images/10.png       (REPORT 4-6)
+                                    ├──▶ step9_concept_visuals.py ──▶ images/11 · 12.png  (REPORT 3-3 · 3-2-1)
                                     │    지역별 연교차                        (REPORT 4-5 · 인사이트 5)
                                     │
                                     ├──▶ step5_sensitivity.py    ──▶ 콘솔 수치 (그래프 없음)
@@ -160,6 +162,7 @@ Codyssey AI 네이티브 과정 · M1-1 개인과제
 | step6 | `asos_..._clean.csv` | 콘솔 수치 | 3-1 · 5장 통계 · 부록 A-5 |
 | step7 | `asos_..._clean.csv` + 기상청 상황지도 조회값 | PNG 2장 | 부록 C ⑤ · ⑥ |
 | step8 | `asos_..._clean.csv` | PNG 1장 | 4-6 |
+| step9 | `nation_daily.csv` | PNG 2장 | 3-3 · 3-2-1 |
 
 > `data/processed/` 는 원본에서 자동 생성되는 중간 산출물(약 13MB)이라 저장소에 포함하지 않았습니다.
 > **step1을 먼저 실행해야** 나머지 단계가 동작합니다.
@@ -171,7 +174,7 @@ m1-1-weather-analysis/
 ├── data/
 │   ├── raw/          기상청 원본 CSV 11개 (연도별)
 │   └── processed/    정제 결과 — git 제외, 아래 실행으로 재생성
-├── images/           분석 결과 그래프 10장 (png) — 본문 01~07·10, 부록 C 08·09
+├── images/           분석 결과 그래프 12장 (png) — 본문 01~07·10~12, 부록 C 08·09
 ├── step1_load_clean.py   병합 · 정제
 ├── step2_visualize.py    그래프 4장 생성
 ├── step3_bonus.py        보너스 — 시계열 분해 · 베이스라인 예측
@@ -180,6 +183,7 @@ m1-1-weather-analysis/
 ├── step6_robustness.py   견고성 검증 — 결측 영향 · 평균 방식 · 인사이트 통계
 ├── step7_changwon_atlas.py  창원 관측값 vs 기상청 전망 대조 (부록 C)
 ├── step8_rate_of_change.py  변화량 · 변화율 (4-6)
+├── step9_concept_visuals.py 개념 검증 그림 — 세 성분 · 이동평균 파라미터 (3-3 · 3-2-1)
 ├── requirements.txt
 ├── REPORT.md         분석 리포트
 └── README.md         이 파일

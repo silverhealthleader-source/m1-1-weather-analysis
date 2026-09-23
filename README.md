@@ -2,6 +2,9 @@
 
 Codyssey AI 네이티브 과정 · M1-1 개인과제
 
+**저장소** https://github.com/silverhealthleader-source/m1-1-weather-analysis  ·  **공개 여부: 공개(Public)** — 로그인 없이 누구나 열람·clone 가능
+**원본 데이터 출처** 기상청 기상자료개방포털 https://data.kma.go.kr (공공저작물 제1유형)
+
 ## 분석 개요
 
 - **주제**: 전국 98개 관측지점의 일별 기온 10년 추이 — 추세 · 계절성 · 폭염/열대야 · 지역 비교 · 지역별 연교차
@@ -48,6 +51,43 @@ Codyssey AI 네이티브 과정 · M1-1 개인과제
 
 ---
 
+## 분석 흐름 — 단계별 산출물 맵
+
+```
+ [입력]                    [실행]                          [산출물]
+ ────────────────────────────────────────────────────────────────────────────
+ data/raw/                 step1_load_clean.py             data/processed/
+ ASOS CSV 11개       ──▶   병합 · 정제 · 이상치 점검   ──▶  asos_2016_2025_clean.csv (348,749행)
+ (374,340행)                                                nation_daily.csv (3,653행)
+                                    │
+                                    ├──▶ step2_visualize.py      ──▶ images/01 · 02 · 03 · 04.png
+                                    │    추세 · 계절성 · 극한 · 지역          (REPORT 4-1~4-4)
+                                    │
+                                    ├──▶ step3_bonus.py          ──▶ images/05 · 06.png
+                                    │    분해(A) · 베이스라인 예측(B)         (REPORT 6장)
+                                    │
+                                    ├──▶ step4_regional_range.py ──▶ images/07.png
+                                    │    지역별 연교차                        (REPORT 4-5 · 인사이트 5)
+                                    │
+                                    ├──▶ step5_sensitivity.py    ──▶ 콘솔 수치 (그래프 없음)
+                                    │    기간 민감도 · 기상청 통제비교         (REPORT 7-1 · 부록 A-2·A-3)
+                                    │
+                                    └──▶ step6_robustness.py     ──▶ 콘솔 수치 (그래프 없음)
+                                         결측 영향 · 평균 방식 · 인사이트 통계  (REPORT 3-1 · 5장 · 부록 A-5)
+```
+
+| 단계 | 입력 | 출력 | 리포트 연결 |
+|---|---|---|---|
+| step1 | `data/raw/*.csv` (11개) | `data/processed/*.csv` (2개) | 3장 · 3-1 |
+| step2 | processed 2개 | PNG 4장 | 4-1 ~ 4-4 |
+| step3 | `nation_daily.csv` | PNG 2장 | 6-1 · 6-2 |
+| step4 | `asos_..._clean.csv` | PNG 1장 | 4-5 · 인사이트 5 |
+| step5 | processed 2개 | 콘솔 수치 | 7-1 · 부록 A-2 · A-3 |
+| step6 | `asos_..._clean.csv` | 콘솔 수치 | 3-1 · 5장 통계 · 부록 A-5 |
+
+> `data/processed/` 는 원본에서 자동 생성되는 중간 산출물(약 13MB)이라 저장소에 포함하지 않았습니다.
+> **step1을 먼저 실행해야** 나머지 단계가 동작합니다.
+
 ## 폴더 구조
 
 ```
@@ -61,6 +101,7 @@ m1-1-weather-analysis/
 ├── step3_bonus.py        보너스 — 시계열 분해 · 베이스라인 예측
 ├── step4_regional_range.py  지역별 연교차 분석
 ├── step5_sensitivity.py  한계점 검증 — 기간 민감도 · 기상청 통제비교
+├── step6_robustness.py   견고성 검증 — 결측 영향 · 평균 방식 · 인사이트 통계
 ├── requirements.txt
 ├── REPORT.md         분석 리포트
 └── README.md         이 파일
@@ -78,13 +119,14 @@ python step2_visualize.py       # images/ 에 그래프 4장 생성
 python step3_bonus.py           # 보너스 그래프 2장 생성 (statsmodels 필요)
 python step4_regional_range.py  # 지역별 연교차 그래프 1장 생성
 python step5_sensitivity.py     # 한계점 검증 수치 출력 (scipy 필요)
+python step6_robustness.py      # 견고성 검증 수치 출력 (scipy 필요)
 ```
 
 ### 실행 환경
 ```
 Python 3.10.12
 pandas==2.3.3 · numpy==2.2.6 · matplotlib==3.10.9
-statsmodels>=0.14 (step3_bonus.py) · scipy>=1.11 (step5_sensitivity.py)
+statsmodels>=0.14 (step3_bonus.py) · scipy>=1.11 (step5·step6)
 ```
 
 ## 데이터 출처 및 라이선스
